@@ -2,7 +2,7 @@ FROM xiaq/alpine-go-pandoc
 
 # Install dependencies from APT
 RUN apk update && \
-    apk add git make rsync
+    apk add git make rsync zip
 
 # Build app
 COPY app /app
