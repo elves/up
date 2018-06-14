@@ -1,0 +1,15 @@
+#!/bin/sh -ex
+IFS=
+REPO=github.com/elves/elvish
+REPO_URL=https://$REPO
+
+: ${BIN_DIR:=/data/bin}
+
+export GOPATH=`mktemp -d`
+cleanup() {
+    rm -rf $GOPATH
+}
+trap cleanup EXIT
+
+git clone --depth=1 --branch="$1" $REPO_URL $GOPATH/src/$REPO
+make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR buildall
