@@ -81,7 +81,7 @@ func main() {
 		for req := range reqCh {
 			log.Println("request:", req)
 			if req.tagName != "" {
-				execHook(*tagHookFlag)
+				execHook(*tagHookFlag, req.tagName)
 			} else {
 				execHook(*masterHookFlag)
 			}
@@ -99,9 +99,9 @@ func checkMAC(secret, payload []byte, digest string) bool {
 	return subtle.ConstantTimeCompare([]byte(expectedDigest), []byte(digest)) == 1
 }
 
-func execHook(hook string) {
+func execHook(hook string, args ...string) {
 	log.Println("going to run hook", hook)
-	p, err := os.StartProcess(hook, []string{hook},
+	p, err := os.StartProcess(hook, append([]string{hook}, args...),
 		&os.ProcAttr{Files: []*os.File{os.Stdin, os.Stdout, os.Stderr}})
 	if err != nil {
 		log.Println("error in StartProcess:", err)
