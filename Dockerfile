@@ -9,6 +9,9 @@ COPY app /app
 RUN go build -o /app/up /app/up.go && \
     mkdir /data
 
-CMD ["/app/up", "-secret", "/data/secret", "-hook", "/app/hook"]
+CMD ["/app/up", \
+     "-secret", "/data/secret", \
+     "-master-hook", "/app/master-hook", \
+     "-tag-hook", "/app/tag-hook"]
 
 EXPOSE 80
