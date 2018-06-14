@@ -7,4 +7,4 @@ REPO=github.com/elves/elvish
 
 go get -u $REPO
 make -C $GOPATH/src/$REPO/website PUBLISH_DIR=$PUBLISH_DIR/ genblog publish
-make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=HEAD buildall
+make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION_SUFFIX=HEAD buildall
