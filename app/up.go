@@ -26,10 +26,6 @@ type Payload struct {
 	RefType string `json:"ref_type"`
 }
 
-type Req struct {
-	tagName string
-}
-
 func main() {
 	flag.Parse()
 
@@ -40,7 +36,8 @@ func main() {
 	secret := bytes.TrimRight(secretBytes, "\n")
 	_ = secret
 
-	reqCh := make(chan Req, 1000)
+	masterCh := make(chan struct{}, 1)
+	tagCh := make(chan string, 32)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("handling request")
@@ -63,28 +60,30 @@ func main() {
 		req := Req{}
 		switch {
 		case parsed.RefType == "tag":
-			req.tagName = parsed.Ref
+			tag := parsed.Ref
+			select {
+			case tagCh <- tag:
+			default:
+			}
 		case parsed.Ref == "refs/heads/master":
-			// Do nothing; an empty Req calls master hook
+			select {
+			case masterCh <- struct{}{}:
+			default:
+			}
 		default:
 			log.Println("not master push or tag creation, ignoring payload", parsed)
-			return
-		}
-
-		select {
-		case reqCh <- req:
-		default:
 		}
 	})
 
 	go func() {
-		for req := range reqCh {
-			log.Println("request:", req)
-			if req.tagName != "" {
-				execHook(*tagHookFlag, req.tagName)
-			} else {
-				execHook(*masterHookFlag)
-			}
+		for range masterCh {
+			execHook(*masterHookFlag)
+		}
+	}()
+
+	go func() {
+		for tag := range tagCh {
+			execHook(*tagHookFlag, tag)
 		}
 	}()
 
@@ -100,7 +99,7 @@ func checkMAC(secret, payload []byte, digest string) bool {
 }
 
 func execHook(hook string, args ...string) {
-	log.Println("going to run hook", hook)
+	log.Println("going to run hook", hook, args)
 	p, err := os.StartProcess(hook, append([]string{hook}, args...),
 		&os.ProcAttr{Files: []*os.File{os.Stdin, os.Stdout, os.Stderr}})
 	if err != nil {
