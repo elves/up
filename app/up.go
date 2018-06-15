@@ -57,7 +57,7 @@ func main() {
 			log.Println("failed to parse payload:", err)
 			return
 		}
-		req := Req{}
+
 		switch {
 		case parsed.RefType == "tag":
 			tag := parsed.Ref
@@ -75,15 +75,23 @@ func main() {
 		}
 	})
 
+	execCh := make(chan []string)
+
 	go func() {
 		for range masterCh {
-			execHook(*masterHookFlag)
+			execCh <- []string{*masterHookFlag}
 		}
 	}()
 
 	go func() {
 		for tag := range tagCh {
-			execHook(*tagHookFlag, tag)
+			execCh <- []string{*tagHookFlag, tag}
+		}
+	}()
+
+	go func() {
+		for cmd := range execCh {
+			execHook(cmd)
 		}
 	}()
 
@@ -98,9 +106,9 @@ func checkMAC(secret, payload []byte, digest string) bool {
 	return subtle.ConstantTimeCompare([]byte(expectedDigest), []byte(digest)) == 1
 }
 
-func execHook(hook string, args ...string) {
-	log.Println("going to run hook", hook, args)
-	p, err := os.StartProcess(hook, append([]string{hook}, args...),
+func execHook(cmd []string) {
+	log.Println("going to run hook", cmd)
+	p, err := os.StartProcess(cmd[0], cmd,
 		&os.ProcAttr{Files: []*os.File{os.Stdin, os.Stdout, os.Stderr}})
 	if err != nil {
 		log.Println("error in StartProcess:", err)
