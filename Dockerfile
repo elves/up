@@ -6,8 +6,7 @@ RUN apk update && \
 
 # Build app
 COPY app /app
-RUN go build -o /app/up /app/up.go && \
-    mkdir /data
+RUN go build -o /app/up /app/up.go
 
 # Set up data directory and permission
 RUN adduser -D -g '' appuser
