@@ -9,9 +9,15 @@ COPY app /app
 RUN go build -o /app/up /app/up.go && \
     mkdir /data
 
+# Set up data directory and permission
+RUN adduser -D -g '' appuser
+RUN mkdir /data && chown appuser /data
+USER appuser
+
 CMD ["/app/up", \
      "-secret", "/data/secret", \
      "-master-hook", "/app/master-hook", \
-     "-tag-hook", "/app/tag-hook"]
+     "-tag-hook", "/app/tag-hook", \
+     "-addr", ":8000"]
 
-EXPOSE 80
+EXPOSE 8000
