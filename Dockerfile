@@ -8,10 +8,12 @@ RUN apk update && \
 COPY app /app
 RUN go build -o /app/up /app/up.go
 
-# Set up data directory and permission
-RUN adduser -D -g '' appuser
-RUN mkdir /data && chown appuser /data
-USER appuser
+# Set up data directory and permission. The user is called travis to make it
+# easier to emulate the GOROOT and GOPATH of our Travis builds.
+RUN adduser -D -g '' travis
+RUN mkdir /data && chown travis /data
+RUN ln -s /usr/local/go /home/travis/goroot
+USER travis
 
 CMD ["/app/up", \
      "-secret", "/data/secret", \

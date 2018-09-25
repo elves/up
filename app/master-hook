@@ -1,9 +1,14 @@
 #!/bin/sh -ex
 IFS=
 REPO=github.com/elves/elvish
-: ${GOPATH:=/data/go}; export GOPATH
+
 : ${PUBLISH_DIR:=/data/html}
 : ${BIN_DIR:=/data/bin}
+
+export GOPATH=/home/travis/gopath
+export GOROOT=/home/travis/goroot
+
+export PATH=$GOPATH/bin:$PATH
 
 go get -u $REPO
 make -C $GOPATH/src/$REPO/_website PUBLISH_DIR=$PUBLISH_DIR/ genblog publish
