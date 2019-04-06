@@ -1,0 +1,4 @@
+: ${BIN_DIR:=/data/bin}
+
+cd $BIN_DIR
+printf '%s\n' */* | sort > index.txt

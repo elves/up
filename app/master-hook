@@ -13,3 +13,5 @@ export PATH=$GOPATH/bin:$PATH
 go get -u $REPO
 make -C $GOPATH/src/$REPO/_website PUBLISH_DIR=$PUBLISH_DIR/ genblog publish
 make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=HEAD buildall
+
+`dirname $0`/update-index

@@ -13,3 +13,5 @@ trap cleanup EXIT
 
 git clone --depth=1 --branch="$1" $REPO_URL $GOPATH/src/$REPO
 make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=$1 buildall
+
+`dirname $0`/update-index
