@@ -1,8 +1,11 @@
-FROM xiaq/alpine-go-pandoc
+FROM pandoc/core:latest as pandoc
+FROM golang:1-alpine
+COPY --from=pandoc /usr/local/pandoc /usr/local/pandoc
+# Runtime dependencies for pandoc.
+RUN apk --no-cache add gmp libffi lua5.3 lua5.3-lpeg
 
-# Install dependencies from APT
-RUN apk update && \
-    apk add git make rsync zip
+# Runtime dependencies for the app
+RUN apk --no-cache add git make rsync zip
 
 # Build app
 COPY app /app
