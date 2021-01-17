@@ -1,6 +1,6 @@
 FROM pandoc/core:latest as pandoc
 FROM golang:1-alpine
-COPY --from=pandoc /usr/local/pandoc /usr/local/pandoc
+COPY --from=pandoc /usr/local/bin/pandoc /usr/local/bin/pandoc
 # Runtime dependencies for pandoc.
 RUN apk --no-cache add gmp libffi lua5.3 lua5.3-lpeg
 
