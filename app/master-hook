@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 IFS=
-REPO=github.com/elves/elvish
+REPO=src.elv.sh
 
 : ${PUBLISH_DIR:=/data/html}
 : ${BIN_DIR:=/data/bin}
@@ -10,7 +10,7 @@ export GOROOT=/home/travis/goroot
 
 export PATH=$GOPATH/bin:$PATH
 
-go get -u $REPO
+go get -d -u $REPO
 make -C $GOPATH/src/$REPO/website PUBLISH_DIR=$PUBLISH_DIR/ -B publish
 make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=HEAD buildall
 
