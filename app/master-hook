@@ -12,6 +12,6 @@ cd $SRC_DIR
 git restore .
 git pull --ff-only
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
-./tools/buildall.sh . $BIN_DIR HEAD `git describe --tags --always`
+./tools/buildall.sh . $BIN_DIR `git describe --tags --always` HEAD
 )
 `dirname $0`/update-index
