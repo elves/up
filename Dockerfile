@@ -11,12 +11,10 @@ RUN apk --no-cache add git make rsync zip
 COPY app /app
 RUN go build -o /app/up /app/up.go
 
-# Set up data directory and permission. The user is called travis to make it
-# easier to emulate the GOROOT and GOPATH of our Travis builds.
-RUN adduser -D -g '' travis
-RUN mkdir /data && chown travis /data
-RUN ln -s /usr/local/go /home/travis/goroot
-USER travis
+# Set up user and data directory.
+RUN adduser -D -g '' builder
+RUN mkdir /data && chown builder /data
+USER builder
 
 CMD ["/app/up", \
      "-secret", "/data/secret", \
