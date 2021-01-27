@@ -34,7 +34,6 @@ func main() {
 		log.Fatalln("failed to read secret file:", err)
 	}
 	secret := bytes.TrimRight(secretBytes, "\n")
-	_ = secret
 
 	masterCh := make(chan struct{}, 1)
 	tagCh := make(chan string, 32)
