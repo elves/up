@@ -1,17 +1,13 @@
 #!/bin/sh -ex
-IFS=
-REPO=github.com/elves/elvish
-REPO_URL=https://$REPO
-
 : ${BIN_DIR:=/data/bin}
 
-export GOPATH=`mktemp -d`
-cleanup() {
-    rm -rf $GOPATH
-}
-trap cleanup EXIT
+SRC_DIR=`mktemp -d`
+trap "rm -rf $SRC_DIR" exit
+git clone --depth=1 --branch="$1" https://github.com/elves/elvish $SRC_DIR
 
-git clone --depth=1 --branch="$1" $REPO_URL $GOPATH/src/$REPO
-make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=$1 buildall
+(
+cd $SRC_DIR
+./tools/buildall.sh . $BIN_DIR $1
+)
 
 `dirname $0`/update-index
