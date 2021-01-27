@@ -1,17 +1,17 @@
 #!/bin/sh -ex
-IFS=
-REPO=src.elv.sh
-
-: ${PUBLISH_DIR:=/data/html}
+: ${HTML_DIR:=/data/html}
 : ${BIN_DIR:=/data/bin}
+: ${SRC_DIR:=/data/src}
 
-export GOPATH=/home/travis/gopath
-export GOROOT=/home/travis/goroot
+if ! test -d $SRC_DIR/.git; then
+    git clone https://github.com/elves/elvish $SRC_DIR
+fi
 
-export PATH=$GOPATH/bin:$PATH
-
-go get -d -u $REPO
-make -C $GOPATH/src/$REPO/website PUBLISH_DIR=$PUBLISH_DIR/ -B publish
-make -C $GOPATH/src/$REPO BIN_DIR=$BIN_DIR VERSION=HEAD buildall
-
+(
+cd $SRC_DIR
+git restore .
+git pull
+make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
+./tools/buildall.sh . $BIN_DIR HEAD `git describe --tags --always`
+)
 `dirname $0`/update-index
