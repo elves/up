@@ -1,7 +1,7 @@
 #!/bin/sh -ex
+: ${SRC_DIR:=/data/src}
 : ${HTML_DIR:=/data/html}
 : ${BIN_DIR:=/data/bin}
-: ${SRC_DIR:=/data/src}
 
 if ! test -d $SRC_DIR/.git; then
     git clone https://github.com/elves/elvish $SRC_DIR
@@ -12,6 +12,6 @@ cd $SRC_DIR
 git restore .
 git pull --ff-only
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
-./tools/buildall.sh . $BIN_DIR `git describe --tags --always` HEAD
+ELVISH_REPRODUCIBLE=dev ./tools/buildall.sh . $BIN_DIR HEAD
 )
 `dirname $0`/update-index
