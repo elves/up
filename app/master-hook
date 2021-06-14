@@ -11,7 +11,19 @@ fi
 cd $SRC_DIR
 git restore .
 git pull --ff-only
+
+# Website
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
+# Docset
+make -C ./website docset
+tar -C ./website -cvzf $HTML_DIR/ref/docset.tgz Elvish.docset
+cat > $HTML_DIR/ref/docset.xml <<EOF
+<entry>
+  <version>$(date +%Y-%m-%d)-$(git rev-parse HEAD)</version>
+  <url>https://elv.sh/ref/docset.tgz</url>
+</entry>
+EOF
+# Binaries
 ELVISH_REPRODUCIBLE=dev ./tools/buildall.sh . $BIN_DIR HEAD
 )
 `dirname $0`/update-index
