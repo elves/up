@@ -6,6 +6,7 @@ RUN apk --no-cache add gmp libffi lua5.3 lua5.3-lpeg
 
 # Runtime dependencies for the app
 RUN apk --no-cache add git make rsync zip python3
+pip3 install beautifulsoup4
 
 # Build app
 COPY app /app
