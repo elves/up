@@ -16,11 +16,12 @@ git pull --ff-only
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
 # Docset
 make -C ./website docset
-tar -C ./website -cvzf $HTML_DIR/ref/docset.tgz Elvish.docset
-cat > $HTML_DIR/ref/docset.xml <<EOF
+mkdir $HTML_DIR/ref/docset
+tar -C ./website -cvzf $HTML_DIR/ref/docset/Elvish.tgz Elvish.docset
+cat > $HTML_DIR/ref/docset/Elvish.xml <<EOF
 <entry>
   <version>$(date +%Y-%m-%d)-$(git rev-parse HEAD)</version>
-  <url>https://elv.sh/ref/docset.tgz</url>
+  <url>https://elv.sh/ref/docset/Elvish.tgz</url>
 </entry>
 EOF
 # Binaries
