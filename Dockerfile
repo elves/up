@@ -12,9 +12,9 @@ RUN pip3 install beautifulsoup4
 COPY app /app
 RUN go build -o /app/up /app/up.go
 
-# Set up user and data directory.
+# Set up user and directories.
 RUN adduser -D -g '' builder
-RUN mkdir /data && chown builder /data
+RUN mkdir /data && chown builder /data /go
 USER builder
 
 CMD ["/app/up", \
