@@ -14,6 +14,7 @@ git pull --ff-only
 
 # Website
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
+git show -s --format=%ct HEAD > ./website/commit-ts.txt
 # Docset
 make -C ./website docset
 mkdir $HTML_DIR/ref/docset
