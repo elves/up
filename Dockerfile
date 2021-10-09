@@ -14,7 +14,7 @@ RUN go build -o /app/up /app/up.go
 
 # Set up user and directories.
 RUN adduser -D -g '' builder
-RUN mkdir /data && chown builder /data /go
+RUN mkdir /data && chown -R builder /data /go
 USER builder
 
 CMD ["/app/up", \
