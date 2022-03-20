@@ -1,5 +1,5 @@
 FROM pandoc/core:2.17.1.1 as pandoc
-FROM golang:1.18.0-alpine
+FROM golang:1.18.0-alpine3.14
 COPY --from=pandoc /usr/local/bin/pandoc /usr/local/bin/pandoc
 # Runtime dependencies for pandoc.
 RUN apk --no-cache add gmp libffi lua5.3 lua5.3-lpeg
