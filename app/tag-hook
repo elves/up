@@ -8,7 +8,7 @@ git clone --depth=1 --branch="$1" https://github.com/elves/elvish $SRC_DIR
 (
 cd $SRC_DIR
 export GO_LD_FLAGS="-X src.elv.sh/pkg/buildinfo.Reproducible=true"
-ELVISH_REPRODUCIBLE=release ./tools/buildall.sh . $BIN_DIR $1
+ELVISH_BUILD_VARIANT=official ./tools/buildall.sh . $BIN_DIR $1
 )
 
 `dirname $0`/update-index

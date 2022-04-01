@@ -28,6 +28,6 @@ cat > $HTML_DIR/ref/docset/Elvish.xml <<EOF
 </entry>
 EOF
 # Binaries
-ELVISH_REPRODUCIBLE=dev ./tools/buildall.sh . $BIN_DIR HEAD
+ELVISH_BUILD_VARIANT=official ./tools/buildall.sh . $BIN_DIR HEAD
 )
 `dirname $0`/update-index
