@@ -16,7 +16,6 @@ git pull --ff-only
 export CGO_ENABLED=0
 # Website
 make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
-git show -s --format=%ct HEAD > $HTML_DIR/commit-ts.txt
 # Docset
 make -C ./website docset
 mkdir $HTML_DIR/ref/docset
@@ -29,5 +28,7 @@ cat > $HTML_DIR/ref/docset/Elvish.xml <<EOF
 EOF
 # Binaries
 ELVISH_BUILD_VARIANT=official ./tools/buildall.sh . $BIN_DIR HEAD
+# Update timestamp
+git show -s --format=%ct HEAD > $HTML_DIR/commit-ts.txt
 )
 `dirname $0`/update-index
