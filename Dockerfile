@@ -2,8 +2,8 @@
 # version. When bumping container versions, always check
 # https://github.com/pandoc/dockerfiles/blob/master/alpine/Dockerfile for the
 # Alpine version it uses, and use the same version for the golang container.
-FROM pandoc/core:2.18.0.0-alpine as pandoc
-FROM golang:1.18.2-alpine3.14
+FROM pandoc/core:2.19.0.0-alpine as pandoc
+FROM golang:1.19.0-alpine3.16
 COPY --from=pandoc /usr/local/bin/pandoc /usr/local/bin/pandoc
 # Runtime dependencies for pandoc.
 RUN apk --no-cache add gmp libffi lua5.3 lua5.3-lpeg
