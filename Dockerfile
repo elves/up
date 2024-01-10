@@ -1,4 +1,4 @@
-FROM golang:1.20.6-alpine3.18
+FROM golang:1.21.6-alpine3.19
 
 # Runtime dependencies for the app
 RUN apk --no-cache add git make rsync zip sqlite python3 py3-pip
