@@ -1,7 +1,7 @@
 FROM golang:1.21.6-alpine3.19
 
 # Runtime dependencies for the app
-RUN apk --no-cache add git make rsync zip sqlite python3 py3-beautifulsoup4
+RUN apk --no-cache add git make rsync zip python3 py3-beautifulsoup4 coreutils
 
 # Build app
 COPY app /app
