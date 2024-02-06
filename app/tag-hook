@@ -1,14 +1,16 @@
 #!/bin/sh -ex
 : ${BIN_DIR:=/data/bin}
 
+TAG=$1
+if printf '%s\n' "$TAG" | grep '-dev$'; then
+    echo 'Not building for *-dev' tag
+    exit
+fi
+
 SRC_DIR=`mktemp -d`
 trap "rm -rf $SRC_DIR" exit
-git clone --depth=1 --branch="$1" https://github.com/elves/elvish $SRC_DIR
+git clone --depth=1 --branch="$TAG" https://github.com/elves/elvish $SRC_DIR
 
-(
-cd $SRC_DIR
-export GO_LD_FLAGS="-X src.elv.sh/pkg/buildinfo.Reproducible=true"
-ELVISH_BUILD_VARIANT=official ./tools/buildall.sh . $BIN_DIR $1
-)
+ELVISH_BUILD_VARIANT=official $SRC_DIR/tools/buildall.sh . $BIN_DIR $TAG
 
 `dirname $0`/update-index
