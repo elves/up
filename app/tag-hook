@@ -2,7 +2,7 @@
 : ${BIN_DIR:=/data/bin}
 
 TAG=$1
-if printf '%s\n' "$TAG" | grep '-dev$'; then
+if printf '%s\n' "$TAG" | grep '.*-dev$'; then
     echo 'Not building for *-dev' tag
     exit
 fi
