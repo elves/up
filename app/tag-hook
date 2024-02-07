@@ -11,6 +11,10 @@ SRC_DIR=`mktemp -d`
 trap "rm -rf $SRC_DIR" exit
 git clone --depth=1 --branch="$TAG" https://github.com/elves/elvish $SRC_DIR
 
-ELVISH_BUILD_VARIANT=official $SRC_DIR/tools/buildall.sh . $BIN_DIR $TAG
+(
+# This is necessary for go build to find the current module
+cd $SRC_DIR
+ELVISH_BUILD_VARIANT=official tools/buildall.sh . $BIN_DIR $TAG
+)
 
 `dirname $0`/update-index
