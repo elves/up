@@ -8,7 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"flag"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +29,7 @@ type Payload struct {
 func main() {
 	flag.Parse()
 
-	secretBytes, err := ioutil.ReadFile(*secretFlag)
+	secretBytes, err := os.ReadFile(*secretFlag)
 	if err != nil {
 		log.Fatalln("failed to read secret file:", err)
 	}
@@ -40,7 +40,7 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("handling request")
-		payload, err := ioutil.ReadAll(r.Body)
+		payload, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Println("failed to read HTTP request:", err)
 			return

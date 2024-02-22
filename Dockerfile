@@ -5,7 +5,7 @@ RUN apk --no-cache add git make rsync zip python3 py3-beautifulsoup4 coreutils
 
 # Build app
 COPY app /app
-RUN go build -o /app/up /app/up.go
+RUN cd /app && go build -o up .
 
 # Set up user and directories.
 RUN adduser -D -g '' builder
