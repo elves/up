@@ -1,20 +1,21 @@
-#!/bin/sh -ex
-: ${BIN_DIR:=/data/bin}
+#!/usr/bin/env elvish
+use flag
+use os
+use str
 
-TAG=$1
-if printf '%s\n' "$TAG" | grep '.*-dev$'; then
-    echo 'Not building for *-dev' tag
-    exit
-fi
+fn main {|&bin-dir=/data/bin tag|
+  if (str:has-suffix $tag -dev) {
+    echo 'Not building -dev tag'
+    return
+  }
+  var src-dir = (os:temp-dir)
+  defer { os:remove-all $src-dir }
 
-SRC_DIR=`mktemp -d`
-trap "rm -rf $SRC_DIR" exit
-git clone --depth=1 --branch="$TAG" https://github.com/elves/elvish $SRC_DIR
+  tmp pwd = $src-dir
+  git clone --depth=1 --branch=$tag https://github.com/elves/elvish .
+  go run ./cmd/elvish ./tools/buildall.elv -name elvish-$tag -variant official ./cmd/elvish $bin-dir
 
-(
-# This is necessary for go build to find the current module
-cd $SRC_DIR
-ELVISH_BUILD_VARIANT=official tools/buildall.sh . $BIN_DIR $TAG
-)
+  utils:update-bin-index $bin-dir
+}
 
-`dirname $0`/update-index
+flag:call $main~ $args

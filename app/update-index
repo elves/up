@@ -1,4 +1,0 @@
-: ${BIN_DIR:=/data/bin}
-
-cd $BIN_DIR
-printf 'https://dl.elv.sh/%s\n' */* | sort > INDEX

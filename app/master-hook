@@ -1,34 +1,48 @@
-#!/bin/sh -ex
-: ${SRC_DIR:=/data/src}
-: ${HTML_DIR:=/data/html}
-: ${BIN_DIR:=/data/bin}
+#!/usr/bin/env elvish
+use flag
+use os
+use ./utils
 
-if ! test -d $SRC_DIR/.git; then
-    git clone https://github.com/elves/elvish $SRC_DIR
-fi
+fn main {|&src-dir=/data/src &html-dir=/data/html &bin-dir=/data/bin|
+  if (not (os:is-dir $src-dir/.git)) {
+    git clone https://github.com/elves/elvish $src-dir
+  }
 
-(
-cd $SRC_DIR
-git restore .
-git pull --ff-only
+  tmp pwd = $src-dir
+  # Make sure that the working directory is clean, just in case.
+  git restore .
+  git pull --ff-only
 
-# Disable CGo when building website toolchain
-export CGO_ENABLED=0
-# Website
-make -C ./website PUBLISH_DIR=$HTML_DIR/ -B publish
-# Docset
-make -C ./website docset
-mkdir $HTML_DIR/ref/docset
-tar -C ./website -cvzf $HTML_DIR/ref/docset/Elvish.tgz Elvish.docset
-cat > $HTML_DIR/ref/docset/Elvish.xml <<EOF
-<entry>
-  <version>$(date +%Y-%m-%d)-$(git rev-parse HEAD)</version>
+  # Build website and docset.
+  {
+    tmp pwd = ./website
+    # Like Elvish itself, the website toolchain doesn't use CGo, so disable it
+    # in case there's something funny with the host's libc (which happens
+    # sometimes with Alpine).
+    tmp E:CGO_ENABLED = 0
+
+    # Use -B since the Makefile rules are not always precise when it comes to
+    # implicit dependencies.
+    make PUBLISH_DIR=$html-dir/ -B publish
+
+    make docset
+    os:mkdir $html-dir/ref/docset
+    tar -cvzf $html-dir/ref/docset/Elvish.tgz Elvish.docset
+    echo '<entry>
+  <version>'(date +%Y-%m-%d)'-'(git rev-parse HEAD)'</version>
   <url>https://elv.sh/ref/docset/Elvish.tgz</url>
-</entry>
-EOF
-# Binaries
-ELVISH_BUILD_VARIANT=official ./tools/buildall.sh . $BIN_DIR HEAD
-# Update timestamp
-git show -s --format=%ct HEAD > $HTML_DIR/commit-ts.txt
-)
-`dirname $0`/update-index
+</entry>' > $html-dir/ref/docset/Elvish.xml
+  }
+
+  # Build binaries. The tools/buildall.elv script is supposed to be used with
+  # the same Elvish at the commit, so use "go run".
+  go run ./cmd/elvish ./tools/buildall.elv -name elvish-HEAD -variant official ./cmd/elvish $bin-dir
+
+  # Update timestamp. This is used by CI tasks elsewhere to check when the
+  # website has been updated.
+  git show -s --format=%ct HEAD > $html-dir/commit-ts.txt
+
+  utils:update-bin-index $bin-dir
+}
+
+flag:call $main~ $args
