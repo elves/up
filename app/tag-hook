@@ -2,6 +2,7 @@
 use flag
 use os
 use str
+use ./utils
 
 fn main {|&bin-dir=/data/bin tag|
   if (str:has-suffix $tag -dev) {
